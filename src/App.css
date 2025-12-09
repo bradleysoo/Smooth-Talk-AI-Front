@@ -10,6 +10,8 @@ body {
 
 }
 
+
+
 #root {
     height: 100%;
 }
@@ -23,7 +25,7 @@ body {
     overflow: hidden;
 }
 
-/* 사이드바 오버레이 */
+/* 사이드바 오버레이 ㅇㅇ*/
 .sidebar-overlay {
     display: none;
 }
@@ -699,7 +701,8 @@ body {
 
 /* 데스크톱 설정 버튼 */
 .settings-btn-desktop {
-    margin-right: auto; /* 왼쪽 정렬 효과 */
+    margin-right: auto;
+    /* 왼쪽 정렬 효과 */
     display: flex;
     align-items: center;
     gap: 6px;
@@ -1297,7 +1300,8 @@ body {
 .placeholder-bubble.center {
     margin: 0 auto;
     cursor: pointer;
-    border-style: solid; /* 가운데 버튼은 실선으로 구분감 */
+    border-style: solid;
+    /* 가운데 버튼은 실선으로 구분감 */
     border-color: rgba(255, 255, 255, 0.4);
 }
 
@@ -1840,6 +1844,7 @@ body {
         opacity: 0;
         transform: translate(-50%, -40%) scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);

@@ -328,7 +328,7 @@ function App() {
                 console.error("Error sending message:", error);
             }
         } else {
-            // 비로그인 상태: 로컬 처리
+            // 비로그인 상태: 로컬 처리ㅇㅇ
             const newMsg = {
                 id: Date.now(),
                 sender: draftSender,
