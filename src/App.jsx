@@ -227,7 +227,8 @@ function App() {
 
     // 마지막 날짜 찾기 (없으면 오늘)
     const getLastDateFromMessages = () => {
-        // 뒤에서부터 탐색하여 system 메시지 찾기
+        // 뒤에서부터 탐색하여 system 메시지 찾기ㅇㅇ
+
         for (let i = messages.length - 1; i >= 0; i--) {
             if (messages[i].sender === 'system') {
                 // "2025년 11월 29일 금요일" 형식 파싱 시도
