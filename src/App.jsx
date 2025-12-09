@@ -284,7 +284,7 @@ function App() {
 
         let currentContextDate;
 
-        // 메시지가 없을 때(첫 시작) 오늘 날짜 자동 추가
+        // 메시지가 없을 때(첫 시작) 오늘 날동 추가
         if (messages.length === 0) {
             const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
             const today = new Date();
