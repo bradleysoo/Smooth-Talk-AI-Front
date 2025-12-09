@@ -242,7 +242,7 @@ function App() {
                 }
             }
         }
-        return new Date(); // 기본값 오늘
+        return new Date(); // 기본값 today
     };
 
     // "다음 날" 버튼 클릭 시
