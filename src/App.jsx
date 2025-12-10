@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from "react";
 import { parseKakaoTalkChat } from "./utils/kakaoParser";
 import UsageGuideToast from "./components/UsageGuideToast";
+import ErrorToast from "./components/ErrorToast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import "./App.css";
 
@@ -842,10 +843,18 @@ function App() {
         }
     };
 
-    // 파일 업로드 핸들러
-    const handleFileUpload = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    // 에러 표시 함수
+    const showError = (msg) => {
+        setErrorMessage(msg);
+        setShowErrorToast(true);
+    };
+
+    // 파일 처리 공통 함수
+    const processFile = async (file) => {
+        if (!file.name.endsWith(".txt")) {
+            showError("올바른 텍스트 파일(.txt)이 아닙니다.");
+            return;
+        }
 
         const reader = new FileReader();
         reader.onload = async (event) => {
@@ -853,7 +862,7 @@ function App() {
             const parsedMessages = parseKakaoTalkChat(text);
 
             if (parsedMessages.length === 0) {
-                alert("대화 내용을 찾을 수 없습니다.");
+                showError("대화 내용을 찾을 수 없습니다. 올바른 카카오톡 내보내기 파일인지 확인해주세요.");
                 return;
             }
 
@@ -884,7 +893,7 @@ function App() {
                     await fetchConversationDetail(currentConversationId, localStorage.getItem("accessToken"));
                 } catch (error) {
                     console.error("Import failed:", error);
-                    alert("대화 내용 저장 중 오류가 발생했습니다.");
+                    showError("대화 내용 저장 중 오류가 발생했습니다.");
                 } finally {
                     setLoading(false);
                 }
@@ -901,7 +910,7 @@ function App() {
                     } else {
                         return {
                             id: msg.id,
-                            sender: msg.sender, // 'me' or 'other'
+                            sender: msg.sender,
                             text: msg.text,
                             time: msg.time
                         };
@@ -916,9 +925,47 @@ function App() {
             }
         };
         reader.readAsText(file);
-        // Reset input
+    };
+
+    // 파일 업로드 핸들러 (Input)
+    const handleFileUpload = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        processFile(file);
+        // Reset input value to allow selecting same file again
         e.target.value = '';
     };
+
+    // 드래그 상태
+    const [isDragging, setIsDragging] = useState(false);
+
+    const handleDragOver = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (!isDragging) setIsDragging(true);
+    };
+
+    const handleDragLeave = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        // 자식 요소로 들어갈 때 firing 방지 로직이 필요할 수 있으나,
+        // 간단하게는 relatedTarget 체크
+        if (!e.currentTarget.contains(e.relatedTarget)) {
+            setIsDragging(false);
+        }
+    };
+
+    const handleDrop = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            processFile(e.dataTransfer.files[0]);
+            e.dataTransfer.clearData();
+        }
+    };
+
 
     // 대화 프레임 삭제
     const deleteConversation = async (id, e) => {
@@ -1517,7 +1564,13 @@ function App() {
 
                 <section className="split-layout" ref={splitLayoutRef}>
                     {/* LEFT */}
-                    <div className="pane pane-chat" style={{ width: `${leftWidth}%` }}>
+                    <div
+                        className={`pane pane-chat ${isDragging ? 'dragging' : ''}`}
+                        style={{ width: `${leftWidth}%` }}
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                    >
                         <div className="pane-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                             <h2 className="pane-title" style={{ margin: 0 }}>대화 프레임 만들기</h2>
                             <button
@@ -2049,6 +2102,12 @@ function App() {
                 <UsageGuideToast
                     onClose={handleCloseUsageToast}
                     onDoNotShowAgain={handleDoNotShowUsageToast}
+                />
+            )}
+            {showErrorToast && (
+                <ErrorToast
+                    message={errorMessage}
+                    onClose={() => setShowErrorToast(false)}
                 />
             )}
         </div >

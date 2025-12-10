@@ -1,0 +1,39 @@
+{
+    "tech_stack": [
+        "JavaScript",
+        "React",
+        "Vite",
+        "CSS"
+    ],
+    "features": [
+        {
+            "name": "Chat Frame",
+            "description": "Main chat interface where users can view and interact with messages",
+            "files": [
+                "src/App.jsx",
+                "src/App.css"
+            ]
+        },
+        {
+            "name": "Kakao Parser",
+            "description": "Utility to parse KakaoTalk text exports",
+            "files": [
+                "src/utils/kakaoParser.js"
+            ]
+        },
+        {
+            "name": "Usage Guide Toast",
+            "description": "Toast notification explaining how to use the app",
+            "files": [
+                "src/components/UsageGuideToast.jsx"
+            ]
+        },
+        {
+            "name": "Analysis",
+            "description": "Features for analyzing chat data",
+            "files": [
+                "src/App.jsx"
+            ]
+        }
+    ]
+}

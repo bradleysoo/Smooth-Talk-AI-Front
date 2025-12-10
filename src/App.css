@@ -1403,6 +1403,7 @@ body {
     border-color: #d2e3fc;
 }
 
+
 /* Delete Account Button Styling */
 .profile-menu-button-delete {
     color: #dc2626 !important;
@@ -1412,50 +1413,6 @@ body {
 .profile-menu-button-delete:hover {
     background-color: #fee2e2 !important;
     color: #991b1b !important;
-}
-
-/* Error Toast Overlay */
-.error-toast-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.15);
-    z-index: 9998;
-    animation: fadeIn 0.2s ease-in-out;
-}
-
-/* Error Toast */
-.error-toast {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 24px 32px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    z-index: 9999;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    min-width: 320px;
-    animation: slideInUp 0.3s ease-out;
-}
-
-.error-toast-icon {
-    font-size: 32px;
-    line-height: 1;
-}
-
-.error-toast-message {
-    font-size: 16px;
-    font-weight: 500;
-    color: #1f2937;
-    line-height: 1.5;
 }
 
 @keyframes fadeIn {
@@ -1956,7 +1913,9 @@ body {
 
 .modal-close-btn-text:hover {
     color: #111827;
-}/* Usage Guide Toast */
+}
+
+/* Usage Guide Toast */
 .usage-guide-toast {
     position: fixed;
     bottom: 24px;
@@ -1965,7 +1924,8 @@ body {
     background: #ffffff;
     border-radius: 12px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    z-index: 2100; /* Higher than normal toast */
+    z-index: 2100;
+    /* Higher than normal toast */
     animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     overflow: hidden;
     border: 1px solid #e5e7eb;
@@ -1976,6 +1936,7 @@ body {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -2091,5 +2052,94 @@ body {
         right: 16px;
         bottom: 16px;
         width: auto;
+    }
+}
+
+.pane-chat {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-width: 300px;
+    background: #fff;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.pane-chat.dragging {
+    background-color: #f0fdf4;
+    /* Light green to indicate drop zone */
+    border: 2px dashed #4ade80;
+}
+
+.pane-chat.dragging::after {
+    content: "파일을 여기에 놓으세요 (.txt)";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: 600;
+    color: #15803d;
+    pointer-events: none;
+}
+
+/* Error Toast */
+.error-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 12px 20px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 3000;
+    animation: slideDownFade 0.3s ease;
+    border: 1px solid #fecaca;
+    min-width: 300px;
+    justify-content: space-between;
+}
+
+.error-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.error-icon {
+    font-size: 16px;
+}
+
+.error-toast-close {
+    background: none;
+    border: none;
+    color: #b91c1c;
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.error-toast-close:hover {
+    opacity: 1;
+}
+
+@keyframes slideDownFade {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
     }
 }
