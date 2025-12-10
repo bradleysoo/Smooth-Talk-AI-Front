@@ -1,6 +1,7 @@
 // src/App.jsx
 import { useState, useRef, useEffect } from "react";
 import { parseKakaoTalkChat } from "./utils/kakaoParser";
+import UsageGuideToast from "./components/UsageGuideToast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import "./App.css";
 
@@ -139,6 +140,34 @@ function App() {
     const [showPaymentModal, setShowPaymentModal] = useState(false);
     // 사용량 초과 모달 상태
     const [showLimitModal, setShowLimitModal] = useState(false);
+    // 사용 가이드 토스트 상태
+    const [showUsageToast, setShowUsageToast] = useState(false);
+
+    // 사용 가이드 표시 로직 (일주일간 보지 않기 체크)
+    useEffect(() => {
+        const hideUntil = localStorage.getItem("hideUsageGuideUntil");
+        if (hideUntil) {
+            const hideUntilDate = new Date(hideUntil);
+            if (new Date() > hideUntilDate) {
+                setShowUsageToast(true);
+                localStorage.removeItem("hideUsageGuideUntil");
+            }
+        } else {
+            setShowUsageToast(true);
+        }
+    }, []);
+
+    const handleCloseUsageToast = () => {
+        setShowUsageToast(false);
+    };
+
+    const handleDoNotShowUsageToast = () => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        localStorage.setItem("hideUsageGuideUntil", date.toISOString());
+        setShowUsageToast(false);
+    };
+
     // 토큰 토스트 상태
     const [showTokenToast, setShowTokenToast] = useState(false);
     // 선택된 토큰 수와 가격
@@ -2016,6 +2045,12 @@ function App() {
                     </div>
                 </section>
             </div >
+            {showUsageToast && (
+                <UsageGuideToast
+                    onClose={handleCloseUsageToast}
+                    onDoNotShowAgain={handleDoNotShowUsageToast}
+                />
+            )}
         </div >
     );
 }

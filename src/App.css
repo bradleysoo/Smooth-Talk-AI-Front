@@ -1956,4 +1956,140 @@ body {
 
 .modal-close-btn-text:hover {
     color: #111827;
+}/* Usage Guide Toast */
+.usage-guide-toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 360px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 2100; /* Higher than normal toast */
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.usage-guide-header {
+    background: #f9fafb;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.usage-guide-header h3 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.usage-guide-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #6b7280;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.usage-guide-close-btn:hover {
+    color: #111827;
+}
+
+.usage-guide-content {
+    padding: 20px;
+}
+
+.usage-guide-content p {
+    margin: 0 0 12px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+}
+
+.usage-guide-content ol {
+    margin: 0 0 16px;
+    padding-left: 20px;
+    font-size: 14px;
+    color: #374151;
+}
+
+.usage-guide-content li {
+    margin-bottom: 8px;
+    line-height: 1.5;
+}
+
+.usage-guide-tip {
+    background: #eff6ff;
+    padding: 12px;
+    border-radius: 8px;
+    color: #1e40af;
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.usage-guide-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.usage-guide-btn-primary {
+    background: #111827;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.usage-guide-btn-primary:hover {
+    background: #1f2937;
+}
+
+.usage-guide-btn-secondary {
+    background: none;
+    color: #6b7280;
+    border: none;
+    padding: 8px 0;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    transition: color 0.2s;
+}
+
+.usage-guide-btn-secondary:hover {
+    color: #374151;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+    .usage-guide-toast {
+        left: 16px;
+        right: 16px;
+        bottom: 16px;
+        width: auto;
+    }
 }
