@@ -1,6 +1,7 @@
 // src/App.jsx
 import { useState, useRef, useEffect } from "react";
 import { parseKakaoTalkChat } from "./utils/kakaoParser";
+import { parseKakaoTalkCsv } from "./utils/kakaoCsvParser";
 import UsageGuideToast from "./components/UsageGuideToast";
 import ErrorToast from "./components/ErrorToast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
@@ -851,15 +852,24 @@ function App() {
 
     // 파일 처리 공통 함수
     const processFile = async (file) => {
-        if (!file.name.endsWith(".txt")) {
-            showError("올바른 텍스트 파일(.txt)이 아닙니다.");
+        const isTxt = file.name.endsWith(".txt");
+        const isCsv = file.name.endsWith(".csv");
+
+        if (!isTxt && !isCsv) {
+            showError("올바른 텍스트(.txt) 또는 CSV(.csv) 파일이 아닙니다.");
             return;
         }
 
         const reader = new FileReader();
         reader.onload = async (event) => {
             const text = event.target.result;
-            const parsedMessages = parseKakaoTalkChat(text);
+            let parsedMessages = [];
+
+            if (isTxt) {
+                parsedMessages = parseKakaoTalkChat(text);
+            } else if (isCsv) {
+                parsedMessages = parseKakaoTalkCsv(text, file.name);
+            }
 
             if (parsedMessages.length === 0) {
                 showError("대화 내용을 찾을 수 없습니다. 올바른 카카오톡 내보내기 파일인지 확인해주세요.");
@@ -1589,7 +1599,7 @@ function App() {
                                 type="file"
                                 ref={fileInputRef}
                                 onChange={handleFileUpload}
-                                accept=".txt"
+                                accept=".txt,.csv"
                                 style={{ display: 'none' }}
                             />
                         </div>
@@ -1722,6 +1732,10 @@ function App() {
                                     <div
                                         className="placeholder-bubble left"
                                         onClick={() => {
+                                            if (draftSender === "other") {
+                                                draftInputRef.current?.focus();
+                                                return;
+                                            }
                                             setDraftSender("other");
                                             setDraftText("");
                                         }}
@@ -1801,6 +1815,10 @@ function App() {
                                     <div
                                         className="placeholder-bubble right"
                                         onClick={() => {
+                                            if (draftSender === "me") {
+                                                draftInputRef.current?.focus();
+                                                return;
+                                            }
                                             // 1. 발신자 설정
                                             setDraftSender("me");
                                             setDraftText("");
@@ -1895,18 +1913,26 @@ function App() {
                                             <div className="chart-container">
                                                 <h4>메시지 빈도</h4>
                                                 <svg viewBox="0 0 200 200" className="pie-chart">
+                                                    <defs>
+                                                        <linearGradient id="userGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" stopColor="#4A90E2" />
+                                                            <stop offset="100%" stopColor="#0033A0" />
+                                                        </linearGradient>
+                                                        <linearGradient id="otherGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                                            <stop offset="0%" stopColor="#FFB6C1" />
+                                                            <stop offset="100%" stopColor="#FF69B4" />
+                                                        </linearGradient>
+                                                    </defs>
                                                     {(() => {
                                                         const total = Object.values(analysis.messageFrequency).reduce((a, b) => a + b, 0);
                                                         let currentAngle = -90; // Start from top
                                                         const colors = {
-                                                            'USER': '#2A52BE',
-                                                            'OTHER': '#FFC0CB',
-
+                                                            'USER': 'url(#userGradient)',
+                                                            'OTHER': 'url(#otherGradient)',
                                                         };
 
                                                         return Object.entries(analysis.messageFrequency).map(([sender, count], idx) => {
                                                             if (count === 0) return null;
-
                                                             const percentage = (count / total) * 100;
 
                                                             // 100%일 경우 원 그리기
