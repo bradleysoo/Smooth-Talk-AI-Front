@@ -4,6 +4,7 @@ import { parseKakaoTalkChat } from "./utils/kakaoParser";
 import { parseKakaoTalkCsv } from "./utils/kakaoCsvParser";
 import UsageGuideToast from "./components/UsageGuideToast";
 import ErrorToast from "./components/ErrorToast";
+import ConfirmToast from "./components/ConfirmToast";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import "./App.css";
 
@@ -36,6 +37,12 @@ function App() {
     // 에러 토스트 상태
     const [showErrorToast, setShowErrorToast] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+    // 파일 가져오기 확인 토스트 상태
+    const [showConfirmToast, setShowConfirmToast] = useState(false);
+    const [confirmMessage, setConfirmMessage] = useState("");
+    const [pendingParsedMessages, setPendingParsedMessages] = useState(null);
+
     // 복사 완료 토스트 상태
     const [showCopyToast, setShowCopyToast] = useState(false);
     // 충전 완료 토스트 상태
@@ -876,65 +883,82 @@ function App() {
                 return;
             }
 
-            const confirmImport = window.confirm("가져온 대화 내용으로 현재 대화창을 채우시겠습니까?\n기존 내용은 유지되거나 뒤에 추가됩니다.");
-            if (!confirmImport) return;
-
-            if (isLoggedIn) {
-                setLoading(true);
-                try {
-                    // 순차적으로 저장하여 ID 순서 보장
-                    for (const msg of parsedMessages) {
-                        const payload = {
-                            sender: msg.type === 'system' ? 'SYSTEM' : (msg.sender === 'me' ? 'USER' : 'OTHER'),
-                            text: msg.text,
-                            timeLabel: msg.time || ""
-                        };
-
-                        await fetch(`${API_BASE_URL}/conversations/${currentConversationId}/messages`, {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json",
-                                "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
-                            },
-                            body: JSON.stringify(payload)
-                        });
-                    }
-                    // 모든 저장 완료 후 목록 갱신
-                    await fetchConversationDetail(currentConversationId, localStorage.getItem("accessToken"));
-                } catch (error) {
-                    console.error("Import failed:", error);
-                    showError("대화 내용 저장 중 오류가 발생했습니다.");
-                } finally {
-                    setLoading(false);
-                }
-            } else {
-                // 비로그인 상태: 로컬 처리
-                const newMessages = parsedMessages.map(msg => {
-                    if (msg.type === 'system') {
-                        return {
-                            id: msg.id,
-                            sender: 'system',
-                            text: msg.text,
-                            time: ''
-                        };
-                    } else {
-                        return {
-                            id: msg.id,
-                            sender: msg.sender,
-                            text: msg.text,
-                            time: msg.time
-                        };
-                    }
-                });
-
-                setConversations(prev => prev.map(conv =>
-                    conv.id === currentConversationId
-                        ? { ...conv, messages: [...conv.messages, ...newMessages] }
-                        : conv
-                ));
-            }
+            // 확인 토스트 표시를 위해 상태 저장
+            setPendingParsedMessages(parsedMessages);
+            setConfirmMessage("가져온 대화 내용으로 현재 대화창을 채우시겠습니까?\n기존 내용은 유지되거나 뒤에 추가됩니다.");
+            setShowConfirmToast(true);
         };
         reader.readAsText(file);
+    };
+
+    // 가져오기 확정 처리 함수
+    const handleConfirmImport = async () => {
+        setShowConfirmToast(false);
+        const parsedMessages = pendingParsedMessages;
+
+        if (!parsedMessages || parsedMessages.length === 0) return;
+
+        if (isLoggedIn) {
+            setLoading(true);
+            try {
+                // 순차적으로 저장하여 ID 순서 보장
+                for (const msg of parsedMessages) {
+                    const payload = {
+                        sender: msg.type === 'system' ? 'SYSTEM' : (msg.sender === 'me' ? 'USER' : 'OTHER'),
+                        text: msg.text,
+                        timeLabel: msg.time || ""
+                    };
+
+                    await fetch(`${API_BASE_URL}/conversations/${currentConversationId}/messages`, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${localStorage.getItem("accessToken")}`
+                        },
+                        body: JSON.stringify(payload)
+                    });
+                }
+                // 저장 완료 후 다시 조회
+                fetchConversationDetail(currentConversationId, localStorage.getItem("accessToken"));
+            } catch (error) {
+                console.error("Failed to save imported messages:", error);
+                showError("대화 내용 저장 중 오류가 발생했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        } else {
+            // 비로그인 상태: 로컬 처리
+            const newMessages = parsedMessages.map(msg => {
+                if (msg.type === 'system') {
+                    return {
+                        id: msg.id,
+                        sender: 'system',
+                        text: msg.text,
+                        time: ''
+                    };
+                } else {
+                    return {
+                        id: msg.id,
+                        sender: msg.sender,
+                        text: msg.text,
+                        time: msg.time
+                    };
+                }
+            });
+
+            setConversations(prev => prev.map(conv =>
+                conv.id === currentConversationId
+                    ? { ...conv, messages: [...conv.messages, ...newMessages] }
+                    : conv
+            ));
+        }
+        setPendingParsedMessages(null);
+    };
+
+    // 가져오기 취소 처리
+    const handleCancelImport = () => {
+        setShowConfirmToast(false);
+        setPendingParsedMessages(null);
     };
 
     // 파일 업로드 핸들러 (Input)
@@ -1107,7 +1131,7 @@ function App() {
     // 다른 곳 클릭 시 선택 해제
     useEffect(() => {
         const handleClickOutside = (e) => {
-            if (chatBgRef.current || !chatBgRef.current.contains(e.target)) {
+            if (chatBgRef.current && !chatBgRef.current.contains(e.target)) {
                 setSelectedMessageId(null);
             }
         };
@@ -1447,15 +1471,16 @@ function App() {
                     )
                 }
 
-                {/* 에러 토스트 알림 */}
+                {/* 확인 토스트 오버레이 */}
                 {
-                    showErrorToast && (
-                        <div className="error-toast">
-                            <div className="error-toast-icon">⚠️</div>
-                            <div className="error-toast-message">{errorMessage}</div>
-                        </div>
+                    showConfirmToast && (
+                        <div
+                            className="confirm-toast-overlay"
+                            onClick={handleCancelImport}
+                        />
                     )
                 }
+
 
                 {/* 사용량 초과 모달 */}
                 {
@@ -1865,9 +1890,7 @@ function App() {
                                     />
                                     <span>말풍선에 시간 표시</span>
                                 </label>
-                                <button className="btn btn-outline" onClick={clearMessages}>
-                                    전체 초기화
-                                </button>
+
                                 <button
                                     className="btn btn-primary"
                                     onClick={handleAnalyze}
@@ -2111,9 +2134,7 @@ function App() {
                             />
                             <span>말풍선에 시간 표시</span>
                         </label>
-                        <button className="btn btn-outline" onClick={clearMessages}>
-                            전체 초기화
-                        </button>
+
                         <button
                             className="btn btn-primary"
                             onClick={handleAnalyze}
@@ -2134,6 +2155,13 @@ function App() {
                 <ErrorToast
                     message={errorMessage}
                     onClose={() => setShowErrorToast(false)}
+                />
+            )}
+            {showConfirmToast && (
+                <ConfirmToast
+                    message={confirmMessage}
+                    onConfirm={handleConfirmImport}
+                    onCancel={handleCancelImport}
                 />
             )}
         </div >
