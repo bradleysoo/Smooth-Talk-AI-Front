@@ -250,5 +250,8 @@ export const parseKakaoTalkCsv = (text, filename) => {
         }
     }
 
+    if (messages.length > 1000) {
+        return messages.slice(-1000);
+    }
     return messages;
 };

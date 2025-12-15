@@ -84,5 +84,8 @@ export const parseKakaoTalkChat = (text) => {
         }
     });
 
+    if (messages.length > 1000) {
+        return messages.slice(-1000);
+    }
     return messages;
 };
