@@ -1421,16 +1421,16 @@ function App() {
                             </button>
                         </div>
                         <div className="legal-links">
-                            <a href="https://smoothtalkai.com/terms" target="_blank" rel="noreferrer">이용약관</a>
+                            <a href="https://soapy-result-8d1.notion.site/2cab0133cc0280c5b2a6c321d5d6c59d?source=copy_link" target="_blank" rel="noreferrer">이용약관</a>
                             <span>|</span>
-                            <a href="https://smoothtalkai.com/privacy" target="_blank" rel="noreferrer">개인정보 처리방침</a>
+                            <a href="https://soapy-result-8d1.notion.site/2cab0133cc0280a58ca4dd3aff9e9d16?source=copy_link" target="_blank" rel="noreferrer">개인정보 처리방침</a>
                             <span>|</span>
                             <a href="https://smoothtalkai.com/business-info" target="_blank" rel="noreferrer">사업자정보확인</a>
                             <span>|</span>
-                            <a href="https://smoothtalkai.com/refund" target="_blank" rel="noreferrer">환불 안내</a>
+                            <a href="https://soapy-result-8d1.notion.site/2cab0133cc0280358b8fca9d341722a9?source=copy_link" target="_blank" rel="noreferrer">환불 안내</a>
                         </div>
                         <div className="business-info">
-                            <p>주식회사 smoothTalkAI | 대표: 김수민</p>
+                            <p>주식회사 Smooth Talk AI | 대표: 김창승</p>
                             <p>사업자등록번호: ???-??-??????</p>
                             <p>통신판매 : 2025-인천-?????</p>
                             <p>주소: 인천광역시 미추홀구 관교동 삼환 apt 103동 1505호</p>
