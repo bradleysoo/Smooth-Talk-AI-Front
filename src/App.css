@@ -2380,6 +2380,17 @@ body {
     justify-content: space-between;
 }
 
+.error-toast-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2999;
+    animation: fadeIn 0.2s ease;
+}
+
 .error-toast-content {
     display: flex;
     align-items: center;
@@ -2418,4 +2429,86 @@ body {
         opacity: 1;
         transform: translate(-50%, 0);
     }
+}
+
+/* Confirm Toast (Import Confirmation) */
+.confirm-toast-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 2999;
+    animation: fadeIn 0.2s ease;
+}
+
+.confirm-toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 16px 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    z-index: 3000;
+    animation: slideDownFade 0.3s ease;
+    border: 1px solid #dbeafe;
+    min-width: 320px;
+}
+
+.confirm-toast-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+.confirm-icon {
+    font-size: 16px;
+}
+
+.confirm-toast-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.confirm-btn-primary {
+    background: #2563eb;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.confirm-btn-primary:hover {
+    background: #1d4ed8;
+}
+
+.confirm-btn-secondary {
+    background: white;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.confirm-btn-secondary:hover {
+    background: #f9fafb;
 }
